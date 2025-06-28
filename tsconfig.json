@@ -1,0 +1,13 @@
+ {
+    "compilerOptions": {
+      /* Basic Options */
+      "target": "es2022",                                  
+      "module": "commonjs",                             
+      "lib": ["dom", "dom.iterable", "esnext"],     
+      "allowJs": true,                                  
+      "checkJs": true,                                  
+      "outDir": "./dist",                               
+      "rootDir": "./",                                  
+    }
+  }
+  
