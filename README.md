@@ -14,7 +14,7 @@ This repository contains an automation framework built using Playwright and Type
 /playwright-project
 |-- /src
     |-- /pages.objects/components   # Reusable components
-    |-- /fixtures                   # Custom fixtures
+    |-- /pages.objects/containers   # Reusable containers
     |-- /pages.objects              # Page objects
     |-- /contexts                   # Business logic
     |-- /utils                      # Utility functions
@@ -36,3 +36,37 @@ Edit the playwright.config.ts file to adjust Playwright settings such as launch 
 
 # Additional Resources
 Playwright Documentation - https://playwright.dev/docs/intro
+
+# Tests
+Now the test framework includes such tests:
+
+1.Feature: Ordering products from Hot Sellers
+
+  Scenario: Make order from Hot Sellers section
+    Given I am on the landing page
+    When I select a random product from the "Hot Sellers" section
+    And I select a size and a color for the product
+    And I add the product to the cart
+    And I proceed to checkout
+    Then I should see the same product details on the shipping page
+
+    When I fill in the shipping information
+    Then I should be able to proceed to the payment page
+
+    When I select a payment method
+    And I place the order
+    Then the product details on the payment page should match the original selection
+    And Payment should be successful 
+
+2.Feature: Order validation without shipping data
+
+  Scenario: Check if order cannot be completed without shipping data
+    Given I am on the landing page
+    When I select a random product from the "Hot Sellers" section
+    And I select a size and a color for the product
+    And I add the product to the cart
+    And I proceed to checkout
+    Then I should be on the shipping page
+
+    When I try to proceed without filling in shipping data
+    Then I should see an error message: "The shipping method is missing. Select the shipping method and try again."
