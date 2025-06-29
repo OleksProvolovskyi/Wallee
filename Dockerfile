@@ -7,4 +7,4 @@ RUN npm ci
 
 COPY . .
 
-CMD ["npx", "playwright", "test", "--grep", "@ci"]
+CMD ["npx", "playwright", "test", "--grep", "@ci", "--reporter=html"]
