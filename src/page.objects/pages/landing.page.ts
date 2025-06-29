@@ -1,6 +1,6 @@
 import { Locator, Page } from "@playwright/test";
 import { ProductItem } from "../components/product.item";
-import { MiniCartPopup } from "../containers/product.item";
+import { MiniCartPopup } from "../containers/mini.cart.popup";
 
 export default class LandingPage {
     readonly page: Page;

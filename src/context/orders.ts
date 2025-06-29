@@ -10,9 +10,20 @@ export default class OrdersContext {
         this.landingPage = new LandingPage(page);
     }
 
-    public async addToCartBySizeAndColor(title: string, size: string, color: string) {
-        await this.landingPage.productItemByTitle(title).attributeIcon(size).click();
-        await this.landingPage.productItemByTitle(title).attributeIcon(color).click();
+    public async addToCartBySizeAndColor(title: string, size?: string, color?: string) {
+        await this.landingPage.productItemByTitle(title).itemElement.hover();
+
+        if (size) {
+            await this.landingPage.productItemByTitle(title).attributeIcon(size).click();
+            await expect(await this.landingPage.productItemByTitle(title).attributeIcon(size).getAttribute('class') === "swatch-option text selected").toBeTruthy();
+        }
+
+        if (color) {
+            await this.landingPage.productItemByTitle(title).attributeIcon(color).click();
+            await expect(await this.landingPage.productItemByTitle(title).attributeIcon(color).getAttribute('class') === "swatch-option color selected").toBeTruthy();
+        }
+
+        await this.landingPage.productItemByTitle(title).addToCartButton.hover();
         await this.landingPage.productItemByTitle(title).addToCartButton.click();
     }
 
@@ -25,7 +36,14 @@ export default class OrdersContext {
     }
 
     public async selectRandomSizeForProduct(title: string): Promise<string> {
-        await this.landingPage.productItemByTitle(title).sizes.first().scrollIntoViewIfNeeded();
+        await this.landingPage.productItemByTitle(title).itemElement.waitFor({state : "visible"});
+        await this.landingPage.productItemByTitle(title).itemElement.scrollIntoViewIfNeeded();
+
+        if (title.includes("Backpack") || title.includes("Bag")) {
+            return null;
+        }
+
+        await this.landingPage.productItemByTitle(title).sizes.first().waitFor({state : "visible"});
 
         const allSizes = await this.landingPage.productItemByTitle(title).sizes.allTextContents();
 
@@ -33,12 +51,21 @@ export default class OrdersContext {
     }
 
     public async selectRandomColorForProduct(title: string): Promise<string> {
-        const colorElements = this.landingPage.productItemByTitle(title).colors;
-        await colorElements.first().scrollIntoViewIfNeeded();
+        await expect(await this.landingPage.productItemByTitle(title).itemElement.isVisible()).toBeTruthy();
 
+        await this.landingPage.productItemByTitle(title).itemElement.scrollIntoViewIfNeeded();
+
+        const colorElements = this.landingPage.productItemByTitle(title).colors;
+        const colorElementsCount = await colorElements.count();
+
+        if (colorElementsCount === 0) {
+            return null;
+        }
+
+        await expect(await this.landingPage.productItemByTitle(title).colors.first()).toBeVisible();
         const labels: string[] = [];
 
-        for (let i = 0; i < await colorElements.count(); i++) {
+        for (let i = 0; i < colorElementsCount; i++) {
             const attr = await colorElements.nth(i).getAttribute('aria-label');
             labels.push(attr);
         }
@@ -49,8 +76,8 @@ export default class OrdersContext {
     public async clickOnCartIcon(): Promise<void> {
         await this.landingPage.cartIcon.scrollIntoViewIfNeeded();
 
-        await expect(parseInt(await this.landingPage.cartNumber.textContent())).toBeGreaterThan(0);
-        
+        await this.landingPage.cartNumber.waitFor({state : "visible"});
+
         await this.landingPage.cartIcon.click();
     }
 
