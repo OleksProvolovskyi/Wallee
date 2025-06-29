@@ -24,6 +24,7 @@ export default class OrdersContext {
         }
 
         await this.landingPage.productItemByTitle(title).addToCartButton.hover();
+        await this.landingPage.productItemByTitle(title).addToCartButton.focus();
         await this.landingPage.productItemByTitle(title).addToCartButton.click();
     }
 
