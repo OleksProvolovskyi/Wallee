@@ -26,6 +26,7 @@ export default class ShippingContext {
     }
 
     public async clickOnNextButton() {
+        await this.shippingPage.nextButton.scrollIntoViewIfNeeded();
         await this.shippingPage.nextButton.click();
     }
 
